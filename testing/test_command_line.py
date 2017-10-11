@@ -9,4 +9,4 @@ def test_list_command(home):
     output = subprocess.check_output([
         sys.executable, 'pipsi.py', '--home', home.strpath, 'list'
     ])
-    assert output == b'There are no scripts installed through pipsi\n'
+    assert output.strip() == b'There are no scripts installed through pipsi'
