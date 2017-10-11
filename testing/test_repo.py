@@ -1,7 +1,7 @@
 import os
 import sys
 import pytest
-from pipsi import Repo, find_scripts
+from pipsi import Repo, find_scripts, IS_WIN
 
 
 @pytest.fixture
@@ -9,19 +9,19 @@ def repo(home, bin):
     return Repo(str(home), str(bin))
 
 
-@pytest.mark.parametrize('package, glob', [
-    ('grin', 'grin*'),
-    ('pipsi', 'pipsi*'),
-])
-def test_simple_install(repo, home, bin, package, glob):
+def test_simple_install(repo, home, bin, pkgindex):
+    package = 'testapp'
     assert not home.listdir()
     assert not bin.listdir()
     repo.install(package)
     assert home.join(package).check()
-    assert bin.listdir(glob)
+    assert bin.listdir(package + '*')
     assert repo.upgrade(package)
 
 
+@pytest.mark.xfail(
+    IS_WIN,
+    reason='attic does not build on windows', run=False)
 @pytest.mark.xfail(
     sys.version_info[0] != 3,
     reason='attic is python3 only', run=False)
